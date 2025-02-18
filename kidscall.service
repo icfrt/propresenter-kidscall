@@ -1,0 +1,14 @@
+[Unit]
+Description=Kidscall Server
+
+[Service]
+ExecStart=node index.js
+Restart=always
+User=www-data
+Group=www-data
+Environment=PORT=5000
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/icfrt-kidscall/server
+
+[Install]
+WantedBy=multi-user.target

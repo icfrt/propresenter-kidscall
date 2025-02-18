@@ -1,0 +1,6 @@
+.vscode
+node_modules/
+/server/config.json
+/server/public/
+/deploy.bat
+/demo-app/
