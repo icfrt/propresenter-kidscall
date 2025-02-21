@@ -117,9 +117,13 @@ io.on('connection', (socket) => {
   });
 
   socket.on('entry', (data) => {
+    if (!data || !data.code || /^[0-9A-Za-z]+$/.test(data.code) === false) {
+      return
+    }
+
     const newEntry = {
       id: entries.length + 1,
-      code: data.code,
+      code: data.code.toUpperCase(),
       timeStamp: new Date(),
       state: STATE_CREATED
     }

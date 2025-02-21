@@ -5,7 +5,10 @@
       
       <v-spacer />
 
-      <v-btn class="text-none" stacked>
+      <v-btn 
+        class="text-none"
+        stacked
+      >
         <v-avatar 
           :color="connectedColor" 
           size="medium"
@@ -29,10 +32,10 @@
           width="400"
         >
           <template #title>
-            <span class="font-weight-black">ProPresenter Offline</span>
+            <span class="font-weight-black">{{ t('offline_title') }}</span>
           </template>
           <v-card-text>            
-            ProPresenter is aktuell nicht verbunden.<br>Bitte kontaktiere den Producer direkt.
+            {{ t('offline_text1') }}<br>{{ t('offline_text2') }}
           </v-card-text>
         </v-card>
         <v-container v-if="state.prop">
@@ -47,6 +50,7 @@
                   size="10"
                   :rules="codeRules"
                   :label="t('code')"
+                  input="this.value = this.value.toUpperCase()"
                   required
                 />
               </v-col>
@@ -107,10 +111,14 @@ const serverPath = (import.meta.env.VITE_BACKEND_PATH) ? import.meta.env.VITE_BA
 
 const messages = {
   de: {
+    offline_title: 'ProPresenter Offline',
+    offline_text1: 'ProPresenter is aktuell nicht verbunden.',
+    offline_text2: 'Bitte kontaktiere den Producer direkt.',
     title: 'ICF ProPresenter Kids Call',
     code: 'Code',
     codeRules: 'Code ist erforderlich.',
     codeRulesLength: 'Code muss weniger als 10 Zeichen lang sein.',
+    codeRulesChars: 'Code darf nur folgende Zeichen enthalten: A-Z oder 0-9.',
     submit: 'Senden',
     timestamp: 'Datum/Zeit',
     status: 'Status',
@@ -123,11 +131,14 @@ const messages = {
     'prop.disconnected': 'ProPresenter Offline',
   },
   en: {
+    offline_title: 'ProPresenter Offline',
+    offline_text1: 'ProPresenter is currently not connected.',
+    offline_text2: 'Please contact the producer directly.',
     title: 'ICF ProPresenter Kids Call',
     code: 'Code',
     codeRules: 'Code is required.',
     codeRulesLength: 'Code must be less than 10 characters.',
-    submit: 'Submit',
+    codeRulesChars: 'Code must only contain A-Z and 0-9.',
     timestamp: 'Date/Time',
     status: 'Status',
     created: 'Created',
@@ -165,6 +176,10 @@ export default {
       value => {
         if (value?.length <= 10) return true
         return translate('codeRulesLength')
+      },
+      value => {
+        if (value && /^[0-9A-Za-z]+$/.test(value)) return true
+        return translate('codeRulesChars')
       },
     ],
     sortBy: [ { key: 'timeStamp', order: 'desc' } ],
@@ -222,7 +237,7 @@ export default {
 
   methods: {
     submit() {
-      this.socket.emit('entry', { code: this.code });
+      this.socket.emit('entry', { code: (this.code + '').toUpperCase() });
       this.code = '';
     },
     t(key) {
